@@ -5,6 +5,7 @@ import { useTheme } from "../providers/ThemeProvider";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Spinner } from "../components/ui/Spinner";
+
 import {
   BarChart3,
   Building2,
@@ -14,6 +15,8 @@ import {
   ReceiptText,
   LogOut,
 } from "lucide-react";
+
+import norteFlowLogo from "../assets/logo/NorteFlowLogo.svg";
 
 function NavItem({
   to,
@@ -59,44 +62,64 @@ export function AppLayout() {
   return (
     <div className="app-bg min-h-screen">
       <div className="flex">
-        <aside className="hidden md:flex w-64 flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-          <div className="px-4 py-5">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center">
-                <BarChart3 className="h-5 w-5" />
+        <aside className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col bg-white/10 dark:bg-slate-950/60 border-r border-glass shadow-glass-glow backdrop-blur-glass px-0 py-0 z-30 justify-between">
+          <div>
+            {/* Glassy sidebar with avatar and gradient pill */}
+            <div className="flex flex-col items-center gap-4 pt-8 pb-6">
+              {/* Avatar with glass and border */}
+              <div className="relative">
+                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500/80 via-fuchsia-500/60 to-emerald-400/80 shadow-xl border-4 border-white/30 dark:border-slate-900/40 flex items-center justify-center overflow-hidden">
+                  {/* Water drop SVG logo */}
+                  <img
+                    src={norteFlowLogo}
+                    alt="NorteFlow Logo"
+                    className="h-12 w-12 select-none"
+                    draggable="false"
+                  />
+                </div>
+                {/* Gradient pill */}
+                <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-blue-500 via-fuchsia-500 to-emerald-400 text-xs font-semibold text-white shadow-lg border border-white/20 backdrop-blur-sm animate-fade-in">
+                  Premium
+                </span>
               </div>
-              <div>
-                <div className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+              <div className="text-center">
+                <div className="text-lg font-bold text-white tracking-tight drop-shadow">
                   NorteFlow
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-slate-300/80 font-medium">
                   Multi-business tracker
                 </div>
               </div>
             </div>
+
+            {/* Navigation */}
+            <nav className="flex flex-col gap-1 px-6 pb-4">
+              <NavItem to="/dashboard" label="Dashboard" icon={BarChart3} />
+              <NavItem to="/businesses" label="Businesses" icon={Building2} />
+              <NavItem to="/income" label="Income" icon={Wallet} />
+              <NavItem to="/expenses" label="Expenses" icon={ReceiptText} />
+            </nav>
           </div>
 
-          <nav className="px-3 pb-4 space-y-1">
-            <NavItem to="/dashboard" label="Dashboard" icon={BarChart3} />
-            <NavItem to="/businesses" label="Businesses" icon={Building2} />
-            <NavItem to="/income" label="Income" icon={Wallet} />
-            <NavItem to="/expenses" label="Expenses" icon={ReceiptText} />
-          </nav>
-
-          <div className="mt-auto p-3 space-y-2">
+          {/* Theme toggle and logout, glassy buttons */}
+          <div className="p-6 flex flex-col gap-3">
             <Button
               variant="outline"
-              className="w-full justify-center"
+              className="w-full justify-center glassy-btn border-glass shadow-glass-glow text-slate-800 dark:text-white hover:bg-accent-blue/10 hover:text-accent-blue dark:hover:text-accent-blue focus-visible:ring-accent-blue"
               onClick={toggle}
               type="button"
             >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              Toggle theme
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+              <span className="ml-2">Toggle theme</span>
             </Button>
 
             <Button
               variant="outline"
-              className="w-full justify-center"
+              className="w-full justify-center glassy-btn border-glass shadow-glass-glow text-slate-800 dark:text-white hover:bg-accent-blue/10 hover:text-accent-blue dark:hover:text-accent-blue focus-visible:ring-accent-blue"
               onClick={async () => {
                 setLoggingOut(true);
                 try {
@@ -108,13 +131,17 @@ export function AppLayout() {
               type="button"
               disabled={loggingOut}
             >
-              {loggingOut ? <Spinner className="h-4 w-4" /> : <LogOut className="h-4 w-4" />}
-              Logout
+              {loggingOut ? (
+                <Spinner className="h-4 w-4" />
+              ) : (
+                <LogOut className="h-4 w-4" />
+              )}
+              <span className="ml-2">Logout</span>
             </Button>
           </div>
         </aside>
 
-        <main className="flex-1">
+        <main className="flex-1 md:ml-72">
           <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 flex items-center justify-between">
             <div>
               <div className="text-sm font-semibold text-slate-900 dark:text-slate-50">
@@ -132,7 +159,11 @@ export function AppLayout() {
                 type="button"
                 aria-label="Toggle theme"
               >
-                {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
               </Button>
               <Button
                 variant="outline"
@@ -149,7 +180,11 @@ export function AppLayout() {
                 aria-label="Logout"
                 disabled={loggingOut}
               >
-                {loggingOut ? <Spinner className="h-4 w-4" /> : <LogOut className="h-4 w-4" />}
+                {loggingOut ? (
+                  <Spinner className="h-4 w-4" />
+                ) : (
+                  <LogOut className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -164,4 +199,3 @@ export function AppLayout() {
     </div>
   );
 }
-

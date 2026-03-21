@@ -1,0 +1,15 @@
+<!-- Water Drop Logo (Top Right) SVG -->
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="dropGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4f8ef7" />
+            <stop offset="100%" stop-color="#183a6d" />
+        </linearGradient>
+    </defs>
+    <path d="M32 6C32 6 54 32 54 44C54 54 44.5 58 32 58C19.5 58 10 54 10 44C10 32 32 6 32 6Z"
+        fill="url(#dropGradient)" />
+    <path d="M32 6C32 6 54 32 54 44C54 54 44.5 58 32 58C19.5 58 10 54 10 44C10 32 32 6 32 6Z"
+        stroke="#183a6d" stroke-width="2" />
+    <path d="M24 38C28 32 36 32 40 38" stroke="#183a6d" stroke-width="2" />
+    <path d="M20 46C26 40 38 40 44 46" stroke="#183a6d" stroke-width="2" />
+</svg>

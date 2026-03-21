@@ -1,0 +1,14 @@
+/* Hide the default calendar icon for input[type=date] when .hide-date-icon is present */
+input[type="date"].hide-date-icon::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+input[type="date"].hide-date-icon::-ms-input-placeholder {
+  color: transparent;
+}
+input[type="date"].hide-date-icon::-moz-placeholder {
+  color: transparent;
+}
+input[type="date"].hide-date-icon::placeholder {
+  color: transparent;
+}

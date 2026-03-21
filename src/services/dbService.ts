@@ -1,3 +1,37 @@
+// Fetch all businesses for a user
+export async function getBusinesses(userId: string) {
+  const { data, error } = await supabase
+    .from("businesses")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+// Fetch all incomes for a user (optionally by business)
+export async function getIncomes({ userId, businessId }: { userId: string; businessId?: string }) {
+  let query = supabase
+    .from("income")
+    .select("*")
+    .eq("user_id", userId);
+  if (businessId) query = query.eq("business_id", businessId);
+  const { data, error } = await query.order("date", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+// Fetch all expenses for a user (optionally by business)
+export async function getExpenses({ userId, businessId }: { userId: string; businessId?: string }) {
+  let query = supabase
+    .from("expenses")
+    .select("*")
+    .eq("user_id", userId);
+  if (businessId) query = query.eq("business_id", businessId);
+  const { data, error } = await query.order("date", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
 import { supabase } from "../lib/supabase";
 
 function num(v: unknown): number {
