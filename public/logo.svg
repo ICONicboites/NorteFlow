@@ -1,0 +1,14 @@
+<!-- Converted Water Drop Logo (SVG) -->
+<svg width="137" height="194" viewBox="0 0 137 194" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="dropGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6EC6F7"/>
+      <stop offset="100%" stop-color="#1A237E"/>
+    </linearGradient>
+  </defs>
+  <path d="M68.5 10C68.5 10 124 80 124 110C124 146 99.5 158 68.5 158C37.5 158 13 146 13 110C13 80 68.5 10 68.5 10Z" fill="url(#dropGradient)"/>
+  <path d="M68.5 10C68.5 10 124 80 124 110C124 146 99.5 158 68.5 158C37.5 158 13 146 13 110C13 80 68.5 10 68.5 10Z" stroke="#1A237E" stroke-width="4"/>
+  <path d="M45 98C57 80 80 80 92 98" stroke="#1A237E" stroke-width="4"/>
+  <path d="M35 120C53 100 84 100 102 120" stroke="#1A237E" stroke-width="4"/>
+  <path d="M10 140C40 120 100 120 130 140" stroke="#1A237E" stroke-width="4"/>
+</svg>
