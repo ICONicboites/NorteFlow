@@ -16,7 +16,7 @@ import {
   LogOut,
 } from "lucide-react";
 
-import norteFlowLogo from "../assets/logo/NorteFlowLogo.svg";
+
 
 function NavItem({
   to,
@@ -71,7 +71,7 @@ export function AppLayout() {
                 <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500/80 via-fuchsia-500/60 to-emerald-400/80 shadow-xl border-4 border-white/30 dark:border-slate-900/40 flex items-center justify-center overflow-hidden">
                   {/* Water drop SVG logo */}
                   <img
-                    src={norteFlowLogo}
+                    src={"/logo.svg"}
                     alt="NorteFlow Logo"
                     className="h-12 w-12 select-none"
                     draggable="false"
