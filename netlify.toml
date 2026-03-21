@@ -4,6 +4,8 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # VITE_* vars are baked into the client bundle by design; Supabase anon key is public (RLS protects data)
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY"
 
 # Client-side routes (React Router); without this, /dashboard etc. return 404 on refresh
 [[redirects]]
