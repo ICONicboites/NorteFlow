@@ -278,7 +278,8 @@ export function DashboardPage() {
               <button
                 type="button"
                 tabIndex={-1}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center text-slate-400 dark:text-slate-300 focus:outline-none"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-slate-400 dark:text-slate-300 focus:outline-none p-0 m-0"
+                style={{transform: 'translateY(-50%)'}}
                 onClick={() => {
                   const input = dashStartInputRef.current;
                   if (input && typeof input.showPicker === "function") {
@@ -287,7 +288,7 @@ export function DashboardPage() {
                 }}
                 aria-label="Open start date picker"
               >
-                <Calendar className="h-5 w-5" />
+                <Calendar className="h-5 w-5 mx-auto" />
               </button>
             </div>
           </div>
@@ -310,7 +311,8 @@ export function DashboardPage() {
               <button
                 type="button"
                 tabIndex={-1}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center text-slate-400 dark:text-slate-300 focus:outline-none"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-slate-400 dark:text-slate-300 focus:outline-none p-0 m-0"
+                style={{transform: 'translateY(-50%)'}}
                 onClick={() => {
                   const input = dashEndInputRef.current;
                   if (input && typeof input.showPicker === "function") {
@@ -319,7 +321,7 @@ export function DashboardPage() {
                 }}
                 aria-label="Open end date picker"
               >
-                <Calendar className="h-5 w-5" />
+                <Calendar className="h-5 w-5 mx-auto" />
               </button>
             </div>
           </div>
