@@ -1,4 +1,5 @@
 import * as React from "react";
+import { MobileSidebar } from "./MobileSidebar";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { useTheme } from "../providers/ThemeProvider";
@@ -15,8 +16,6 @@ import {
   ReceiptText,
   LogOut,
 } from "lucide-react";
-
-
 
 function NavItem({
   to,
@@ -50,6 +49,7 @@ export function AppLayout() {
   const { toggle, theme } = useTheme();
   const location = useLocation();
   const [loggingOut, setLoggingOut] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   const title = React.useMemo(() => {
     if (location.pathname.startsWith("/dashboard")) return "Dashboard";
@@ -61,15 +61,28 @@ export function AppLayout() {
 
   return (
     <div className="app-bg min-h-screen">
+      <MobileSidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        theme={theme}
+        toggleTheme={toggle}
+        loggingOut={loggingOut}
+        logout={async () => {
+          setLoggingOut(true);
+          try {
+            await logout();
+          } finally {
+            setLoggingOut(false);
+          }
+        }}
+      />
       <div className="flex">
+        {/* Desktop Sidebar */}
         <aside className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col bg-white/10 dark:bg-slate-950/60 border-r border-glass shadow-glass-glow backdrop-blur-glass px-0 py-0 z-30 justify-between">
           <div>
-            {/* Glassy sidebar with avatar and gradient pill */}
             <div className="flex flex-col items-center gap-4 pt-8 pb-6">
-              {/* Avatar with glass and border */}
               <div className="relative">
                 <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500/80 via-fuchsia-500/60 to-emerald-400/80 shadow-xl border-4 border-white/30 dark:border-slate-900/40 flex items-center justify-center overflow-hidden">
-                  {/* Water drop SVG logo */}
                   <img
                     src={"/logo.svg"}
                     alt="NorteFlow Logo"
@@ -77,7 +90,6 @@ export function AppLayout() {
                     draggable="false"
                   />
                 </div>
-                {/* Gradient pill */}
                 <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-blue-500 via-fuchsia-500 to-emerald-400 text-xs font-semibold text-white shadow-lg border border-white/20 backdrop-blur-sm animate-fade-in">
                   Premium
                 </span>
@@ -91,8 +103,6 @@ export function AppLayout() {
                 </div>
               </div>
             </div>
-
-            {/* Navigation */}
             <nav className="flex flex-col gap-1 px-6 pb-4">
               <NavItem to="/dashboard" label="Dashboard" icon={BarChart3} />
               <NavItem to="/businesses" label="Businesses" icon={Building2} />
@@ -100,8 +110,6 @@ export function AppLayout() {
               <NavItem to="/expenses" label="Expenses" icon={ReceiptText} />
             </nav>
           </div>
-
-          {/* Theme toggle and logout, glassy buttons */}
           <div className="p-6 flex flex-col gap-3">
             <Button
               variant="outline"
@@ -116,7 +124,6 @@ export function AppLayout() {
               )}
               <span className="ml-2">Toggle theme</span>
             </Button>
-
             <Button
               variant="outline"
               className="w-full justify-center glassy-btn border-glass shadow-glass-glow text-slate-800 dark:text-white hover:bg-accent-blue/10 hover:text-accent-blue dark:hover:text-accent-blue focus-visible:ring-accent-blue"
@@ -140,9 +147,28 @@ export function AppLayout() {
             </Button>
           </div>
         </aside>
-
-        <main className="flex-1 md:ml-72">
+        <main className="flex-1 w-full md:ml-72">
           <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 flex items-center justify-between">
+            <button
+              className="p-2 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="feather feather-menu"
+              >
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
             <div>
               <div className="text-sm font-semibold text-slate-900 dark:text-slate-50">
                 {title}
@@ -188,8 +214,7 @@ export function AppLayout() {
               </Button>
             </div>
           </div>
-
-          <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+          <div className="p-2 sm:p-4 max-w-full md:max-w-7xl mx-auto">
             <Card className="p-0 overflow-hidden">
               <Outlet />
             </Card>
