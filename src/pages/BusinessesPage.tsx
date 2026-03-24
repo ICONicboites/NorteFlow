@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../providers/AuthProvider";
 import { useBusinesses } from "../hooks/supabaseHooks";
-import { createBusiness } from "../services/dbService";
+import { createBusiness, updateBusiness } from "../services/dbService";
 import { Button } from "../components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
@@ -26,6 +26,7 @@ export function BusinessesPage() {
 
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
+  const [editingId, setEditingId] = React.useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -37,15 +38,25 @@ export function BusinessesPage() {
     setSubmitError(null);
     setSubmitting(true);
     try {
-      await createBusiness({
-        userId: user.id,
-        name: values.name,
-        category: values.category,
-      });
+      if (editingId) {
+        await updateBusiness({
+          userId: user.id,
+          businessId: editingId,
+          name: values.name,
+          category: values.category,
+        });
+      } else {
+        await createBusiness({
+          userId: user.id,
+          name: values.name,
+          category: values.category,
+        });
+      }
       await refetch();
       form.reset();
+      setEditingId(null);
     } catch (e: unknown) {
-      setSubmitError(e instanceof Error ? e.message : "Failed to create business.");
+      setSubmitError(e instanceof Error ? e.message : editingId ? "Failed to update business." : "Failed to create business.");
     } finally {
       setSubmitting(false);
     }
@@ -55,7 +66,7 @@ export function BusinessesPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Create a business</CardTitle>
+          <CardTitle>{editingId ? "Edit business" : "Create a business"}</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="grid gap-4 md:grid-cols-2" onSubmit={form.handleSubmit(onSubmit)}>
@@ -76,8 +87,20 @@ export function BusinessesPage() {
 
             <div className="md:col-span-2 flex gap-3 items-center">
               <Button type="submit" disabled={submitting}>
-                {submitting ? <Spinner className="h-4 w-4" /> : "Add business"}
+                {submitting ? <Spinner className="h-4 w-4" /> : editingId ? "Update business" : "Add business"}
               </Button>
+              {editingId && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    setEditingId(null);
+                    form.reset();
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
               {submitError && (
                 <div className="text-sm text-red-700 rounded-md bg-red-50 border border-red-200 p-3">
                   {submitError}
@@ -111,6 +134,7 @@ export function BusinessesPage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Created</TableHead>
+                  <TableHead>Edit</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -119,6 +143,19 @@ export function BusinessesPage() {
                     <TableCell className="font-medium">{b.name}</TableCell>
                     <TableCell>{b.category}</TableCell>
                     <TableCell>{formatDate(b.created_at)}</TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setEditingId(b.id);
+                          form.setValue("name", b.name);
+                          form.setValue("category", b.category);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
