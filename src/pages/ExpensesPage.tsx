@@ -68,7 +68,6 @@ export function ExpensesPage() {
   } = useExpenses({
     userId: uid,
     businessId: businessFilter,
-    category: categoryFilter,
     startDate,
     endDate,
   });
