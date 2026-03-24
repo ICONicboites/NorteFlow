@@ -150,7 +150,7 @@ export function AppLayout() {
         <main className="flex-1 w-full md:ml-72">
           <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 flex items-center justify-between relative">
             <button
-              className="fixed left-2 top-2 z-50 p-3 rounded-full border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white shadow-lg md:hidden"
+              className="absolute left-4 top-4 z-30 p-3 rounded-full border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white shadow-lg md:hidden"
               style={{ boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)' }}
               onClick={() => setSidebarOpen(true)}
               aria-label="Open menu"
