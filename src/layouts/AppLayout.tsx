@@ -56,6 +56,7 @@ export function AppLayout() {
     if (location.pathname.startsWith("/businesses")) return "Businesses";
     if (location.pathname.startsWith("/income")) return "Income";
     if (location.pathname.startsWith("/expenses")) return "Expenses";
+    if (location.pathname.startsWith("/history")) return "History";
     return "NorteFlow";
   }, [location.pathname]);
 
@@ -78,7 +79,7 @@ export function AppLayout() {
       />
       <div className="flex">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col bg-white/10 dark:bg-slate-950/60 border-r border-glass shadow-glass-glow backdrop-blur-glass px-0 py-0 z-30 justify-between">
+        <aside className="hidden md:flex fixed left-0 top-0 h-screen w-72 flex-col bg-white/10 dark:bg-slate-950/60 shadow-xl shadow-blue-200/30 dark:shadow-black/60 backdrop-blur-glass px-0 py-0 z-30 justify-between">
           <div>
             <div className="flex flex-col items-center gap-4 pt-8 pb-6">
               <div className="relative">
@@ -95,10 +96,20 @@ export function AppLayout() {
                 </span>
               </div>
               <div className="text-center">
-                <div className={"text-lg font-bold tracking-tight drop-shadow " + (theme === "dark" ? "text-white" : "text-slate-900") }>
+                <div
+                  className={
+                    "text-lg font-bold tracking-tight drop-shadow " +
+                    (theme === "dark" ? "text-white" : "text-slate-900")
+                  }
+                >
                   NorteFlow
                 </div>
-                <div className={"text-xs font-medium " + (theme === "dark" ? "text-slate-300/80" : "text-slate-500") }>
+                <div
+                  className={
+                    "text-xs font-medium " +
+                    (theme === "dark" ? "text-slate-300/80" : "text-slate-500")
+                  }
+                >
                   Multi-business tracker
                 </div>
               </div>
@@ -108,6 +119,7 @@ export function AppLayout() {
               <NavItem to="/businesses" label="Businesses" icon={Building2} />
               <NavItem to="/income" label="Income" icon={Wallet} />
               <NavItem to="/expenses" label="Expenses" icon={ReceiptText} />
+              <NavItem to="/history" label="History" icon={LogOut} />
             </nav>
           </div>
           <div className="p-6 flex flex-col gap-3">
@@ -152,7 +164,7 @@ export function AppLayout() {
             <div className="flex items-center gap-3">
               <button
                 className="p-3 rounded-full border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white shadow-lg md:hidden"
-                style={{ boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)' }}
+                style={{ boxShadow: "0 2px 8px 0 rgba(0,0,0,0.10)" }}
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open menu"
               >

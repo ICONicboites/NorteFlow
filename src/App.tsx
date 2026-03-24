@@ -10,11 +10,17 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { BusinessesPage } from "./pages/BusinessesPage";
 import { IncomePage } from "./pages/IncomePage";
 import { ExpensesPage } from "./pages/ExpensesPage";
+import { HistoryPage } from "./pages/HistoryPage";
 
 function RootRedirect() {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center" />;
-  return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
+  if (loading)
+    return <div className="min-h-screen flex items-center justify-center" />;
+  return user ? (
+    <Navigate to="/dashboard" replace />
+  ) : (
+    <Navigate to="/login" replace />
+  );
 }
 
 export default function App() {
@@ -33,6 +39,7 @@ export default function App() {
               <Route path="/businesses" element={<BusinessesPage />} />
               <Route path="/income" element={<IncomePage />} />
               <Route path="/expenses" element={<ExpensesPage />} />
+              <Route path="/history" element={<HistoryPage />} />
             </Route>
           </Route>
 
@@ -42,4 +49,3 @@ export default function App() {
     </ThemeProvider>
   );
 }
-

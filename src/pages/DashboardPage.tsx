@@ -239,7 +239,7 @@ export function DashboardPage() {
 
       {/* Filters Row */}
       <Card className="bg-white/10 dark:bg-navy-light/80 border border-glass shadow-glass-glow backdrop-blur-glass p-8">
-        <CardContent className="grid gap-6 md:grid-cols-4">
+        <CardContent className="grid gap-6 md:grid-cols-3">
           <div className="space-y-2 md:col-span-1">
             <Label
               htmlFor="dash-business"
@@ -327,33 +327,16 @@ export function DashboardPage() {
               </button>
             </div>
           </div>
-          <div className="space-y-2">
-            <Label
-              htmlFor="dash-category"
-              className="text-slate-900 dark:text-slate-50"
-            >
-              Expense category
-            </Label>
-            <Input
-              id="dash-category"
-              placeholder="Exact match, optional"
-              value={expenseCategory ?? ""}
-              onChange={(e) =>
-                setExpenseCategory(e.target.value ? e.target.value : null)
-              }
-              className="bg-white dark:bg-navy-light border-accent text-slate-900 dark:text-white rounded-lg"
-            />
-          </div>
         </CardContent>
       </Card>
 
-      <Card className="bg-white/10 dark:bg-navy-light/80 border border-glass shadow-glass-glow backdrop-blur-glass">
+      <Card className="bg-gradient-to-br from-blue-50/80 via-white/80 to-accent-blue/10 dark:from-navy-light/90 dark:via-slate-900/80 dark:to-accent-blue/20 border border-glass shadow-2xl shadow-accent-blue/10 backdrop-blur-glass rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-accent-blue">
+          <CardTitle className="text-2xl font-bold text-accent-blue drop-shadow-sm">
             Profit per business
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -387,19 +370,21 @@ export function DashboardPage() {
           </div>
 
           <div className="overflow-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-base rounded-xl overflow-hidden shadow-lg">
               <thead>
-                <tr className="text-left border-b border-glass">
-                  <th className="py-3 pr-4 font-medium text-accent-blue">
+                <tr className="text-left border-b border-accent-blue/30 bg-accent-blue/10 dark:bg-accent-blue/20">
+                  <th className="py-3 pr-4 font-bold text-accent-blue tracking-wide uppercase">
                     Business
                   </th>
-                  <th className="py-3 pr-4 font-medium text-accent-blue">
+                  <th className="py-3 pr-4 font-bold text-accent-blue tracking-wide uppercase">
                     Income
                   </th>
-                  <th className="py-3 pr-4 font-medium text-accent-blue">
+                  <th className="py-3 pr-4 font-bold text-accent-blue tracking-wide uppercase">
                     Expenses
                   </th>
-                  <th className="py-3 font-medium text-accent-blue">Net</th>
+                  <th className="py-3 font-bold text-accent-blue tracking-wide uppercase">
+                    Net
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -407,7 +392,7 @@ export function DashboardPage() {
                   <tr>
                     <td
                       colSpan={4}
-                      className="py-4 text-slate-600 dark:text-slate-400"
+                      className="py-4 text-slate-600 dark:text-slate-400 text-center"
                     >
                       No data for this range.
                     </td>
@@ -420,9 +405,9 @@ export function DashboardPage() {
                     return (
                       <tr
                         key={b.businessId}
-                        className="border-b border-glass/50"
+                        className={`border-b border-glass/30 transition hover:bg-accent-blue/10 dark:hover:bg-accent-blue/20 ${b.net > 0 ? "hover:shadow-lg" : ""}`}
                       >
-                        <td className="py-3 pr-4 font-medium text-slate-900 dark:text-white">
+                        <td className="py-3 pr-4 font-semibold text-slate-900 dark:text-white">
                           {name}
                         </td>
                         <td className="py-3 pr-4 text-slate-800 dark:text-slate-200">
@@ -431,7 +416,9 @@ export function DashboardPage() {
                         <td className="py-3 pr-4 text-slate-800 dark:text-slate-200">
                           {formatCurrency(b.expenses)}
                         </td>
-                        <td className="py-3 font-semibold text-accent-blue">
+                        <td
+                          className={`py-3 font-bold ${b.net > 0 ? "text-profit-green" : b.net < 0 ? "text-expense-rose" : "text-accent-blue"}`}
+                        >
                           {formatCurrency(b.net)}
                         </td>
                       </tr>
@@ -444,23 +431,31 @@ export function DashboardPage() {
         </CardContent>
       </Card>
 
-      <Card className="bg-white/10 dark:bg-navy-light/80 border border-glass shadow-glass-glow backdrop-blur-glass">
+      <Card className="bg-gradient-to-br from-blue-50/80 via-white/80 to-accent-blue/10 dark:from-navy-light/90 dark:via-slate-900/80 dark:to-accent-blue/20 border border-glass shadow-2xl shadow-accent-blue/10 backdrop-blur-glass rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-accent-blue">
+          <CardTitle className="text-2xl font-bold text-accent-blue drop-shadow-sm">
             Trend (last 14 days)
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={daily}>
-                <CartesianGrid strokeDasharray="4 4" />
+              <LineChart
+                data={daily}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="4 4" stroke="#e0e7ef" />
                 <XAxis
                   dataKey="date"
                   stroke="#4f8ef7"
-                  tick={{ fill: "#fff" }}
+                  tick={{ fill: "#4f8ef7", fontWeight: 600 }}
+                  tickFormatter={formatYMD}
                 />
-                <YAxis stroke="#4f8ef7" tick={{ fill: "#fff" }} />
+                <YAxis
+                  stroke="#4f8ef7"
+                  tick={{ fill: "#4f8ef7", fontWeight: 600 }}
+                  tickFormatter={(v) => formatCurrency(Number(v))}
+                />
                 <Tooltip
                   formatter={(v: any) => formatCurrency(Number(v))}
                   contentStyle={{
@@ -474,25 +469,50 @@ export function DashboardPage() {
                   dataKey="income"
                   name="Income"
                   stroke="#2ecc71"
-                  strokeWidth={2.5}
+                  strokeWidth={3}
                   dot={false}
+                  activeDot={{ r: 7 }}
                 />
                 <Line
                   type="monotone"
                   dataKey="expenses"
                   name="Expenses"
                   stroke="#e74c3c"
-                  strokeWidth={2.5}
+                  strokeWidth={3}
                   dot={false}
+                  activeDot={{ r: 7 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="net"
+                  name="Net"
+                  stroke="#4f8ef7"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 7 }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-3 text-xs text-slate-600 dark:text-slate-400">
-            Range shown: {daily[0]?.date ? formatYMD(daily[0].date) : "-"} -{" "}
-            {daily[daily.length - 1]?.date
-              ? formatYMD(daily[daily.length - 1].date)
-              : "-"}
+          <div className="flex flex-wrap gap-4 items-center mt-4">
+            <span className="flex items-center gap-2 text-sm font-medium">
+              <span className="inline-block w-4 h-2 rounded bg-[#2ecc71]"></span>
+              Income
+            </span>
+            <span className="flex items-center gap-2 text-sm font-medium">
+              <span className="inline-block w-4 h-2 rounded bg-[#e74c3c]"></span>
+              Expenses
+            </span>
+            <span className="flex items-center gap-2 text-sm font-medium">
+              <span className="inline-block w-4 h-2 rounded bg-[#4f8ef7]"></span>
+              Net
+            </span>
+            <span className="ml-auto text-xs text-slate-600 dark:text-slate-400">
+              Range shown: {daily[0]?.date ? formatYMD(daily[0].date) : "-"} -{" "}
+              {daily[daily.length - 1]?.date
+                ? formatYMD(daily[daily.length - 1].date)
+                : "-"}
+            </span>
           </div>
         </CardContent>
       </Card>

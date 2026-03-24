@@ -6,11 +6,23 @@ import { useAuth } from "../providers/AuthProvider";
 import { useBusinesses, useIncomes } from "../hooks/supabaseHooks";
 import { createIncome, updateIncome } from "../services/dbService";
 import { Button } from "../components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { Spinner } from "../components/ui/Spinner";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/Table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/Table";
 import { formatCurrency, formatDate } from "../lib/format";
 
 const schema = z.object({
@@ -35,13 +47,24 @@ export function IncomePage() {
   const { user } = useAuth();
   const uid = user?.id ?? null;
 
-  const { businesses, loading: bizLoading, error: bizError } = useBusinesses(uid);
-  const [businessFilter, setBusinessFilter] = React.useState<string | null>(null);
+  const {
+    businesses,
+    loading: bizLoading,
+    error: bizError,
+  } = useBusinesses(uid);
+  const [businessFilter, setBusinessFilter] = React.useState<string | null>(
+    null,
+  );
 
   const [startDate, setStartDate] = React.useState<string | null>(null);
   const [endDate, setEndDate] = React.useState<string | null>(null);
 
-  const { data: incomes, loading: incomesLoading, error: incomesError, refetch: refetchIncomes } = useIncomes({
+  const {
+    data: incomes,
+    loading: incomesLoading,
+    error: incomesError,
+    refetch: refetchIncomes,
+  } = useIncomes({
     userId: uid,
     businessId: businessFilter,
     startDate,
@@ -76,7 +99,10 @@ export function IncomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid, bizLoading, businesses]);
 
-  const incomeTotal = React.useMemo(() => incomes.reduce((sum, i) => sum + i.total, 0), [incomes]);
+  const incomeTotal = React.useMemo(
+    () => incomes.reduce((sum, i) => sum + i.total, 0),
+    [incomes],
+  );
 
   async function onSubmit(values: FormValues) {
     if (!uid) return;
@@ -107,7 +133,13 @@ export function IncomePage() {
       form.reset({ ...form.getValues(), product: "", quantity: 1, price: 0 });
       setEditingId(null);
     } catch (e: unknown) {
-      setSubmitError(e instanceof Error ? e.message : editingId ? "Failed to update income." : "Failed to add income.");
+      setSubmitError(
+        e instanceof Error
+          ? e.message
+          : editingId
+            ? "Failed to update income."
+            : "Failed to add income.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -120,7 +152,10 @@ export function IncomePage() {
           <CardTitle>{editingId ? "Edit income" : "Add income"}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form className="grid gap-4 md:grid-cols-2" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            className="grid gap-4 md:grid-cols-2"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             <div className="space-y-1.5">
               <Label htmlFor="income-date">Date</Label>
               <Input id="income-date" type="date" {...form.register("date")} />
@@ -134,18 +169,31 @@ export function IncomePage() {
                 {...form.register("businessId")}
               >
                 {bizLoading ? <option>Loading...</option> : null}
-                {!bizLoading && businesses.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+                {!bizLoading &&
+                  businesses.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
               </select>
               {form.formState.errors.businessId && (
-                <p className="text-sm text-red-600">{form.formState.errors.businessId.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.businessId.message}
+                </p>
               )}
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="income-product">Product</Label>
-              <Input id="income-product" placeholder="e.g. Bottled Water" {...form.register("product")} />
+              <Input
+                id="income-product"
+                placeholder="e.g. Bottled Water"
+                {...form.register("product")}
+              />
               {form.formState.errors.product && (
-                <p className="text-sm text-red-600">{form.formState.errors.product.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.product.message}
+                </p>
               )}
             </div>
 
@@ -158,7 +206,9 @@ export function IncomePage() {
                 {...form.register("quantity", { valueAsNumber: true })}
               />
               {form.formState.errors.quantity && (
-                <p className="text-sm text-red-600">{form.formState.errors.quantity.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.quantity.message}
+                </p>
               )}
             </div>
 
@@ -171,13 +221,24 @@ export function IncomePage() {
                 {...form.register("price", { valueAsNumber: true })}
               />
               {form.formState.errors.price && (
-                <p className="text-sm text-red-600">{form.formState.errors.price.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.price.message}
+                </p>
               )}
             </div>
 
             <div className="flex items-end">
-              <Button type="submit" disabled={submitting || bizLoading || !!bizError}>
-                {submitting ? <Spinner className="h-4 w-4" /> : editingId ? "Update income" : "Add income"}
+              <Button
+                type="submit"
+                disabled={submitting || bizLoading || !!bizError}
+              >
+                {submitting ? (
+                  <Spinner className="h-4 w-4" />
+                ) : editingId ? (
+                  "Update income"
+                ) : (
+                  "Add income"
+                )}
               </Button>
               {editingId && (
                 <Button
@@ -185,7 +246,12 @@ export function IncomePage() {
                   variant="ghost"
                   onClick={() => {
                     setEditingId(null);
-                    form.reset({ ...form.getValues(), product: "", quantity: 1, price: 0 });
+                    form.reset({
+                      ...form.getValues(),
+                      product: "",
+                      quantity: 1,
+                      price: 0,
+                    });
                   }}
                 >
                   Cancel
@@ -215,7 +281,9 @@ export function IncomePage() {
               <select
                 id="filter-business"
                 value={businessFilter ?? ""}
-                onChange={(e) => setBusinessFilter(e.target.value ? e.target.value : null)}
+                onChange={(e) =>
+                  setBusinessFilter(e.target.value ? e.target.value : null)
+                }
                 className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50"
               >
                 <option value="">All businesses</option>
@@ -229,12 +297,22 @@ export function IncomePage() {
 
             <div className="space-y-1.5">
               <Label htmlFor="filter-start">Start date</Label>
-              <Input id="filter-start" type="date" value={startDate ?? ""} onChange={(e) => setStartDate(e.target.value || null)} />
+              <Input
+                id="filter-start"
+                type="date"
+                value={startDate ?? ""}
+                onChange={(e) => setStartDate(e.target.value || null)}
+              />
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="filter-end">End date</Label>
-              <Input id="filter-end" type="date" value={endDate ?? ""} onChange={(e) => setEndDate(e.target.value || null)} />
+              <Input
+                id="filter-end"
+                type="date"
+                value={endDate ?? ""}
+                onChange={(e) => setEndDate(e.target.value || null)}
+              />
             </div>
           </div>
 
@@ -248,9 +326,13 @@ export function IncomePage() {
               Loading...
             </div>
           ) : incomesError ? (
-            <div className="text-sm text-red-700 rounded-md bg-red-50 border border-red-200 p-3">{incomesError}</div>
+            <div className="text-sm text-red-700 rounded-md bg-red-50 border border-red-200 p-3">
+              {incomesError}
+            </div>
           ) : incomes.length === 0 ? (
-            <div className="text-sm text-slate-600 dark:text-slate-300">No income entries for the current filters.</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300">
+              No income entries for the current filters.
+            </div>
           ) : (
             <Table>
               <TableHeader>
@@ -261,7 +343,7 @@ export function IncomePage() {
                   <TableHead className="text-right">Qty</TableHead>
                   <TableHead className="text-right">Price</TableHead>
                   <TableHead className="text-right">Total</TableHead>
-                  <TableHead>Edit</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -273,8 +355,12 @@ export function IncomePage() {
                       <TableCell>{b?.name ?? i.business_id}</TableCell>
                       <TableCell>{i.product}</TableCell>
                       <TableCell className="text-right">{i.quantity}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(i.price)}</TableCell>
-                      <TableCell className="text-right font-medium">{formatCurrency(i.total)}</TableCell>
+                      <TableCell className="text-right">
+                        {formatCurrency(i.price)}
+                      </TableCell>
+                      <TableCell className="text-right font-medium">
+                        {formatCurrency(i.total)}
+                      </TableCell>
                       <TableCell>
                         <Button
                           size="sm"
@@ -302,4 +388,3 @@ export function IncomePage() {
     </div>
   );
 }
-

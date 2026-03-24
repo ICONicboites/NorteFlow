@@ -4,14 +4,30 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../providers/AuthProvider";
 import { useBusinesses } from "../hooks/supabaseHooks";
-import { createBusiness, updateBusiness } from "../services/dbService";
+import {
+  createBusiness,
+  updateBusiness,
+  deleteBusiness,
+} from "../services/dbService";
 import { Button } from "../components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { Spinner } from "../components/ui/Spinner";
 import { formatDate } from "../lib/format";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/Table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/Table";
 
 const schema = z.object({
   name: z.string().min(2, "Business name is required."),
@@ -22,11 +38,33 @@ type FormValues = z.infer<typeof schema>;
 
 export function BusinessesPage() {
   const { user } = useAuth();
-  const { businesses, loading, error, refetch } = useBusinesses(user?.id ?? null);
+  const { businesses, loading, error, refetch } = useBusinesses(
+    user?.id ?? null,
+  );
 
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  const [deleteError, setDeleteError] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState(false);
+  async function handleDelete(businessId: string) {
+    if (!user) return;
+    setDeleteError(null);
+    setDeletingId(businessId);
+    setDeleting(true);
+    try {
+      await deleteBusiness({ userId: user.id, businessId });
+      await refetch();
+    } catch (e: unknown) {
+      setDeleteError(
+        e instanceof Error ? e.message : "Failed to delete business.",
+      );
+    } finally {
+      setDeleting(false);
+      setDeletingId(null);
+    }
+  }
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -56,7 +94,13 @@ export function BusinessesPage() {
       form.reset();
       setEditingId(null);
     } catch (e: unknown) {
-      setSubmitError(e instanceof Error ? e.message : editingId ? "Failed to update business." : "Failed to create business.");
+      setSubmitError(
+        e instanceof Error
+          ? e.message
+          : editingId
+            ? "Failed to update business."
+            : "Failed to create business.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -66,28 +110,51 @@ export function BusinessesPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{editingId ? "Edit business" : "Create a business"}</CardTitle>
+          <CardTitle>
+            {editingId ? "Edit business" : "Create a business"}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="grid gap-4 md:grid-cols-2" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            className="grid gap-4 md:grid-cols-2"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             <div className="space-y-1.5">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="e.g. Water" {...form.register("name")} />
+              <Input
+                id="name"
+                placeholder="e.g. Water"
+                {...form.register("name")}
+              />
               {form.formState.errors.name && (
-                <p className="text-sm text-red-600">{form.formState.errors.name.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.name.message}
+                </p>
               )}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="category">Category</Label>
-              <Input id="category" placeholder="e.g. Services" {...form.register("category")} />
+              <Input
+                id="category"
+                placeholder="e.g. Services"
+                {...form.register("category")}
+              />
               {form.formState.errors.category && (
-                <p className="text-sm text-red-600">{form.formState.errors.category.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.category.message}
+                </p>
               )}
             </div>
 
             <div className="md:col-span-2 flex gap-3 items-center">
               <Button type="submit" disabled={submitting}>
-                {submitting ? <Spinner className="h-4 w-4" /> : editingId ? "Update business" : "Add business"}
+                {submitting ? (
+                  <Spinner className="h-4 w-4" />
+                ) : editingId ? (
+                  "Update business"
+                ) : (
+                  "Add business"
+                )}
               </Button>
               {editingId && (
                 <Button
@@ -122,7 +189,9 @@ export function BusinessesPage() {
               Loading...
             </div>
           ) : error ? (
-            <div className="text-sm text-red-700 rounded-md bg-red-50 border border-red-200 p-3">{error}</div>
+            <div className="text-sm text-red-700 rounded-md bg-red-50 border border-red-200 p-3">
+              {error}
+            </div>
           ) : businesses.length === 0 ? (
             <div className="text-sm text-slate-600 dark:text-slate-300">
               No businesses yet. Create your first one above.
@@ -134,7 +203,7 @@ export function BusinessesPage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Created</TableHead>
-                  <TableHead>Edit</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -143,7 +212,7 @@ export function BusinessesPage() {
                     <TableCell className="font-medium">{b.name}</TableCell>
                     <TableCell>{b.category}</TableCell>
                     <TableCell>{formatDate(b.created_at)}</TableCell>
-                    <TableCell>
+                    <TableCell className="flex gap-2 flex-wrap">
                       <Button
                         size="sm"
                         variant="outline"
@@ -155,15 +224,39 @@ export function BusinessesPage() {
                       >
                         Edit
                       </Button>
+                      <Button
+                        size="sm"
+                        className="bg-black text-white hover:bg-zinc-800 focus:bg-zinc-900"
+                        disabled={deleting && deletingId === b.id}
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Are you sure you want to delete \"${b.name}\"? This cannot be undone.`,
+                            )
+                          ) {
+                            handleDelete(b.id);
+                          }
+                        }}
+                      >
+                        {deleting && deletingId === b.id ? (
+                          <Spinner className="h-4 w-4" />
+                        ) : (
+                          "Delete"
+                        )}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           )}
+          {deleteError && (
+            <div className="text-sm text-red-700 rounded-md bg-red-50 border border-red-200 p-3 mt-3">
+              {deleteError}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
   );
 }
-

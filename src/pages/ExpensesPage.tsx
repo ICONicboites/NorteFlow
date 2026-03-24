@@ -6,11 +6,23 @@ import { useAuth } from "../providers/AuthProvider";
 import { useBusinesses, useExpenses } from "../hooks/supabaseHooks";
 import { createExpense, updateExpense } from "../services/dbService";
 import { Button } from "../components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { Spinner } from "../components/ui/Spinner";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/Table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/Table";
 import { formatCurrency, formatDate } from "../lib/format";
 
 const schema = z.object({
@@ -36,14 +48,27 @@ export function ExpensesPage() {
   const { user } = useAuth();
   const uid = user?.id ?? null;
 
-  const { businesses, loading: bizLoading, error: bizError } = useBusinesses(uid);
-  const [businessFilter, setBusinessFilter] = React.useState<string | null>(null);
+  const {
+    businesses,
+    loading: bizLoading,
+    error: bizError,
+  } = useBusinesses(uid);
+  const [businessFilter, setBusinessFilter] = React.useState<string | null>(
+    null,
+  );
 
   const [startDate, setStartDate] = React.useState<string | null>(null);
   const [endDate, setEndDate] = React.useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = React.useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = React.useState<string | null>(
+    null,
+  );
 
-  const { data: expenses, loading: expensesLoading, error: expensesError, refetch: refetchExpenses } = useExpenses({
+  const {
+    data: expenses,
+    loading: expensesLoading,
+    error: expensesError,
+    refetch: refetchExpenses,
+  } = useExpenses({
     userId: uid,
     businessId: businessFilter,
     category: categoryFilter,
@@ -113,10 +138,22 @@ export function ExpensesPage() {
         });
       }
       await refetchExpenses();
-      form.reset({ ...form.getValues(), item: "", category: "", amount: 0, notes: "" });
+      form.reset({
+        ...form.getValues(),
+        item: "",
+        category: "",
+        amount: 0,
+        notes: "",
+      });
       setEditingId(null);
     } catch (e: unknown) {
-      setSubmitError(e instanceof Error ? e.message : editingId ? "Failed to update expense." : "Failed to add expense.");
+      setSubmitError(
+        e instanceof Error
+          ? e.message
+          : editingId
+            ? "Failed to update expense."
+            : "Failed to add expense.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -129,7 +166,10 @@ export function ExpensesPage() {
           <CardTitle>{editingId ? "Edit expense" : "Add expense"}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form className="grid gap-4 md:grid-cols-2" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            className="grid gap-4 md:grid-cols-2"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             <div className="space-y-1.5">
               <Label htmlFor="expense-date">Date</Label>
               <Input id="expense-date" type="date" {...form.register("date")} />
@@ -143,18 +183,31 @@ export function ExpensesPage() {
                 {...form.register("businessId")}
               >
                 {bizLoading ? <option>Loading...</option> : null}
-                {!bizLoading && businesses.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+                {!bizLoading &&
+                  businesses.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
               </select>
               {form.formState.errors.businessId && (
-                <p className="text-sm text-red-600">{form.formState.errors.businessId.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.businessId.message}
+                </p>
               )}
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="expense-item">Item</Label>
-              <Input id="expense-item" placeholder="e.g. Water bottle refill" {...form.register("item")} />
+              <Input
+                id="expense-item"
+                placeholder="e.g. Water bottle refill"
+                {...form.register("item")}
+              />
               {form.formState.errors.item && (
-                <p className="text-sm text-red-600">{form.formState.errors.item.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.item.message}
+                </p>
               )}
             </div>
 
@@ -166,7 +219,9 @@ export function ExpensesPage() {
                 {...form.register("category")}
               />
               {form.formState.errors.category && (
-                <p className="text-sm text-red-600">{form.formState.errors.category.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.category.message}
+                </p>
               )}
             </div>
 
@@ -179,18 +234,33 @@ export function ExpensesPage() {
                 {...form.register("amount", { valueAsNumber: true })}
               />
               {form.formState.errors.amount && (
-                <p className="text-sm text-red-600">{form.formState.errors.amount.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.amount.message}
+                </p>
               )}
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="expense-notes">Notes (optional)</Label>
-              <Input id="expense-notes" placeholder="e.g. Cash payment" {...form.register("notes")} />
+              <Input
+                id="expense-notes"
+                placeholder="e.g. Cash payment"
+                {...form.register("notes")}
+              />
             </div>
 
             <div className="flex items-end md:col-span-2">
-              <Button type="submit" disabled={submitting || bizLoading || !!bizError}>
-                {submitting ? <Spinner className="h-4 w-4" /> : editingId ? "Update expense" : "Add expense"}
+              <Button
+                type="submit"
+                disabled={submitting || bizLoading || !!bizError}
+              >
+                {submitting ? (
+                  <Spinner className="h-4 w-4" />
+                ) : editingId ? (
+                  "Update expense"
+                ) : (
+                  "Add expense"
+                )}
               </Button>
               {editingId && (
                 <Button
@@ -198,7 +268,13 @@ export function ExpensesPage() {
                   variant="ghost"
                   onClick={() => {
                     setEditingId(null);
-                    form.reset({ ...form.getValues(), item: "", category: "", amount: 0, notes: "" });
+                    form.reset({
+                      ...form.getValues(),
+                      item: "",
+                      category: "",
+                      amount: 0,
+                      notes: "",
+                    });
                   }}
                 >
                   Cancel
@@ -222,13 +298,15 @@ export function ExpensesPage() {
           <CardTitle>Expense entries</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-1.5">
               <Label htmlFor="filter-business">Business</Label>
               <select
                 id="filter-business"
                 value={businessFilter ?? ""}
-                onChange={(e) => setBusinessFilter(e.target.value ? e.target.value : null)}
+                onChange={(e) =>
+                  setBusinessFilter(e.target.value ? e.target.value : null)
+                }
                 className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50"
               >
                 <option value="">All businesses</option>
@@ -242,21 +320,21 @@ export function ExpensesPage() {
 
             <div className="space-y-1.5">
               <Label htmlFor="filter-start">Start</Label>
-              <Input id="filter-start" type="date" value={startDate ?? ""} onChange={(e) => setStartDate(e.target.value || null)} />
+              <Input
+                id="filter-start"
+                type="date"
+                value={startDate ?? ""}
+                onChange={(e) => setStartDate(e.target.value || null)}
+              />
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="filter-end">End</Label>
-              <Input id="filter-end" type="date" value={endDate ?? ""} onChange={(e) => setEndDate(e.target.value || null)} />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="filter-category">Category</Label>
               <Input
-                id="filter-category"
-                placeholder="Exact match (e.g. Supplies)"
-                value={categoryFilter ?? ""}
-                onChange={(e) => setCategoryFilter(e.target.value ? e.target.value : null)}
+                id="filter-end"
+                type="date"
+                value={endDate ?? ""}
+                onChange={(e) => setEndDate(e.target.value || null)}
               />
             </div>
           </div>
@@ -271,9 +349,13 @@ export function ExpensesPage() {
               Loading...
             </div>
           ) : expensesError ? (
-            <div className="text-sm text-red-700 rounded-md bg-red-50 border border-red-200 p-3">{expensesError}</div>
+            <div className="text-sm text-red-700 rounded-md bg-red-50 border border-red-200 p-3">
+              {expensesError}
+            </div>
           ) : expenses.length === 0 ? (
-            <div className="text-sm text-slate-600 dark:text-slate-300">No expense entries for the current filters.</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300">
+              No expense entries for the current filters.
+            </div>
           ) : (
             <Table>
               <TableHeader>
@@ -284,7 +366,7 @@ export function ExpensesPage() {
                   <TableHead>Category</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                   <TableHead>Notes</TableHead>
-                  <TableHead>Edit</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -296,8 +378,12 @@ export function ExpensesPage() {
                       <TableCell>{b?.name ?? e.business_id}</TableCell>
                       <TableCell>{e.item}</TableCell>
                       <TableCell>{e.category}</TableCell>
-                      <TableCell className="text-right font-medium">{formatCurrency(e.amount)}</TableCell>
-                      <TableCell className="max-w-[200px] truncate">{e.notes}</TableCell>
+                      <TableCell className="text-right font-medium">
+                        {formatCurrency(e.amount)}
+                      </TableCell>
+                      <TableCell className="max-w-[200px] truncate">
+                        {e.notes}
+                      </TableCell>
                       <TableCell>
                         <Button
                           size="sm"
@@ -326,4 +412,3 @@ export function ExpensesPage() {
     </div>
   );
 }
-
