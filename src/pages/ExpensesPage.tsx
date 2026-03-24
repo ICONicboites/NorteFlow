@@ -59,9 +59,6 @@ export function ExpensesPage() {
 
   const [startDate, setStartDate] = React.useState<string | null>(null);
   const [endDate, setEndDate] = React.useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = React.useState<string | null>(
-    null,
-  );
 
   const {
     data: expenses,

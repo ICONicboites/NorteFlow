@@ -74,9 +74,6 @@ export function DashboardPage() {
     return ymdLocal(start);
   });
   const [endDate, setEndDate] = React.useState<string>(() => todayInputValue());
-  const [expenseCategory, setExpenseCategory] = React.useState<string | null>(
-    null,
-  );
 
   React.useEffect(() => {
     if (bizLoading) return;
@@ -104,7 +101,6 @@ export function DashboardPage() {
     businessId,
     startDate,
     endDate,
-    category: expenseCategory,
   });
 
   const loading = bizLoading || incomesLoading || expensesLoading;
