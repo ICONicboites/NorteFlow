@@ -41,15 +41,17 @@ export const KpiCard: React.FC<KpiCardProps> = ({
   }, [value]);
 
   const TrendIcon = trendDirection === "up" ? ArrowUp : ArrowDown;
-  const trendColor =
-    trendDirection === "up"
-      ? "text-profit-green dark:text-profit-green"
-      : "text-expense-rose dark:text-expense-rose";
   // Use a more opaque background for contrast in both themes
   const badgeBg =
     trendDirection === "up"
       ? "bg-profit-green/20 dark:bg-profit-green/30"
       : "bg-expense-rose/20 dark:bg-expense-rose/30";
+
+  // Make text readable in light mode (darker text)
+  const trendColor =
+    trendDirection === "up"
+      ? "text-green-700 dark:text-profit-green font-bold"
+      : "text-red-700 dark:text-expense-rose font-bold";
 
   return (
     <div

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../providers/AuthProvider";
 import { useBusinesses, useExpenses } from "../hooks/supabaseHooks";
-import { createExpense } from "../services/dbService";
+import { createExpense, updateExpense } from "../services/dbService";
 import { Button } from "../components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
@@ -53,6 +53,7 @@ export function ExpensesPage() {
 
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
+  const [editingId, setEditingId] = React.useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -89,19 +90,33 @@ export function ExpensesPage() {
     setSubmitError(null);
     setSubmitting(true);
     try {
-      await createExpense({
-        userId: uid,
-        businessId: values.businessId,
-        item: values.item,
-        category: values.category,
-        amount: values.amount,
-        notes: values.notes,
-        date: values.date,
-      });
+      if (editingId) {
+        await updateExpense({
+          userId: uid,
+          expenseId: editingId,
+          businessId: values.businessId,
+          item: values.item,
+          category: values.category,
+          amount: values.amount,
+          notes: values.notes,
+          date: values.date,
+        });
+      } else {
+        await createExpense({
+          userId: uid,
+          businessId: values.businessId,
+          item: values.item,
+          category: values.category,
+          amount: values.amount,
+          notes: values.notes,
+          date: values.date,
+        });
+      }
       await refetchExpenses();
       form.reset({ ...form.getValues(), item: "", category: "", amount: 0, notes: "" });
+      setEditingId(null);
     } catch (e: unknown) {
-      setSubmitError(e instanceof Error ? e.message : "Failed to add expense.");
+      setSubmitError(e instanceof Error ? e.message : editingId ? "Failed to update expense." : "Failed to add expense.");
     } finally {
       setSubmitting(false);
     }
@@ -111,7 +126,7 @@ export function ExpensesPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Add expense</CardTitle>
+          <CardTitle>{editingId ? "Edit expense" : "Add expense"}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <form className="grid gap-4 md:grid-cols-2" onSubmit={form.handleSubmit(onSubmit)}>
@@ -175,8 +190,20 @@ export function ExpensesPage() {
 
             <div className="flex items-end md:col-span-2">
               <Button type="submit" disabled={submitting || bizLoading || !!bizError}>
-                {submitting ? <Spinner className="h-4 w-4" /> : "Add expense"}
+                {submitting ? <Spinner className="h-4 w-4" /> : editingId ? "Update expense" : "Add expense"}
               </Button>
+              {editingId && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    setEditingId(null);
+                    form.reset({ ...form.getValues(), item: "", category: "", amount: 0, notes: "" });
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
             </div>
 
             <div className="md:col-span-2">
@@ -257,6 +284,7 @@ export function ExpensesPage() {
                   <TableHead>Category</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                   <TableHead>Notes</TableHead>
+                  <TableHead>Edit</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -270,6 +298,23 @@ export function ExpensesPage() {
                       <TableCell>{e.category}</TableCell>
                       <TableCell className="text-right font-medium">{formatCurrency(e.amount)}</TableCell>
                       <TableCell className="max-w-[200px] truncate">{e.notes}</TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingId(e.id);
+                            form.setValue("date", e.date);
+                            form.setValue("businessId", e.business_id);
+                            form.setValue("item", e.item);
+                            form.setValue("category", e.category);
+                            form.setValue("amount", e.amount);
+                            form.setValue("notes", e.notes ?? "");
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })}

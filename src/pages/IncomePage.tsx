@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../providers/AuthProvider";
 import { useBusinesses, useIncomes } from "../hooks/supabaseHooks";
-import { createIncome } from "../services/dbService";
+import { createIncome, updateIncome } from "../services/dbService";
 import { Button } from "../components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
@@ -50,6 +50,7 @@ export function IncomePage() {
 
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
+  const [editingId, setEditingId] = React.useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -82,19 +83,31 @@ export function IncomePage() {
     setSubmitError(null);
     setSubmitting(true);
     try {
-      await createIncome({
-        userId: uid,
-        businessId: values.businessId,
-        product: values.product,
-        quantity: values.quantity,
-        price: values.price,
-        date: values.date,
-      });
-      // Ensure the table updates immediately (realtime can be delayed/misconfigured).
+      if (editingId) {
+        await updateIncome({
+          userId: uid,
+          incomeId: editingId,
+          businessId: values.businessId,
+          product: values.product,
+          quantity: values.quantity,
+          price: values.price,
+          date: values.date,
+        });
+      } else {
+        await createIncome({
+          userId: uid,
+          businessId: values.businessId,
+          product: values.product,
+          quantity: values.quantity,
+          price: values.price,
+          date: values.date,
+        });
+      }
       await refetchIncomes();
       form.reset({ ...form.getValues(), product: "", quantity: 1, price: 0 });
+      setEditingId(null);
     } catch (e: unknown) {
-      setSubmitError(e instanceof Error ? e.message : "Failed to add income.");
+      setSubmitError(e instanceof Error ? e.message : editingId ? "Failed to update income." : "Failed to add income.");
     } finally {
       setSubmitting(false);
     }
@@ -104,7 +117,7 @@ export function IncomePage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Add income</CardTitle>
+          <CardTitle>{editingId ? "Edit income" : "Add income"}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <form className="grid gap-4 md:grid-cols-2" onSubmit={form.handleSubmit(onSubmit)}>
@@ -164,8 +177,20 @@ export function IncomePage() {
 
             <div className="flex items-end">
               <Button type="submit" disabled={submitting || bizLoading || !!bizError}>
-                {submitting ? <Spinner className="h-4 w-4" /> : "Add income"}
+                {submitting ? <Spinner className="h-4 w-4" /> : editingId ? "Update income" : "Add income"}
               </Button>
+              {editingId && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    setEditingId(null);
+                    form.reset({ ...form.getValues(), product: "", quantity: 1, price: 0 });
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
             </div>
 
             <div className="md:col-span-2">
@@ -236,6 +261,7 @@ export function IncomePage() {
                   <TableHead className="text-right">Qty</TableHead>
                   <TableHead className="text-right">Price</TableHead>
                   <TableHead className="text-right">Total</TableHead>
+                  <TableHead>Edit</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -249,6 +275,22 @@ export function IncomePage() {
                       <TableCell className="text-right">{i.quantity}</TableCell>
                       <TableCell className="text-right">{formatCurrency(i.price)}</TableCell>
                       <TableCell className="text-right font-medium">{formatCurrency(i.total)}</TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingId(i.id);
+                            form.setValue("date", i.date);
+                            form.setValue("businessId", i.business_id);
+                            form.setValue("product", i.product);
+                            form.setValue("quantity", i.quantity);
+                            form.setValue("price", i.price);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })}

@@ -95,10 +95,10 @@ export function AppLayout() {
                 </span>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-white tracking-tight drop-shadow">
+                <div className={"text-lg font-bold tracking-tight drop-shadow " + (theme === "dark" ? "text-white" : "text-slate-900") }>
                   NorteFlow
                 </div>
-                <div className="text-xs text-slate-300/80 font-medium">
+                <div className={"text-xs font-medium " + (theme === "dark" ? "text-slate-300/80" : "text-slate-500") }>
                   Multi-business tracker
                 </div>
               </div>
