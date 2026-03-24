@@ -1,4 +1,3 @@
-import React from "react";
 import { FiMenu, FiSearch, FiUser } from "react-icons/fi";
 
 export default function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
