@@ -234,9 +234,9 @@ export function DashboardPage() {
       </div>
 
       {/* Filters Row */}
-      <Card className="bg-white/10 dark:bg-navy-light/80 border border-glass shadow-glass-glow backdrop-blur-glass p-8">
-        <CardContent className="grid gap-6 md:grid-cols-3">
-          <div className="space-y-2 md:col-span-1">
+      <Card className="bg-white/10 dark:bg-navy-light/80 border border-glass shadow-glass-glow backdrop-blur-glass p-4 md:p-8">
+        <CardContent className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+          <div className="space-y-2">
             <Label
               htmlFor="dash-business"
               className="text-slate-900 dark:text-slate-50"
