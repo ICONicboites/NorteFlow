@@ -83,6 +83,16 @@ export function MobileSidebar({
               <ReceiptText className="h-4 w-4" />
               Expenses
             </NavLink>
+            <NavLink
+              to="/history"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${isActive ? "bg-slate-100 dark:bg-slate-800 text-accent-blue" : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"}`
+              }
+              onClick={onClose}
+            >
+              <LogOut className="h-4 w-4" />
+              History
+            </NavLink>
           </nav>
         </div>
         <div className="p-4 flex flex-col gap-3 border-t border-slate-200 dark:border-slate-800">
