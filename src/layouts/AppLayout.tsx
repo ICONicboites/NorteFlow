@@ -148,34 +148,36 @@ export function AppLayout() {
           </div>
         </aside>
         <main className="flex-1 w-full md:ml-72">
-          <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 flex items-center justify-between relative">
-            <button
-              className="absolute left-4 top-4 z-30 p-3 rounded-full border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white shadow-lg md:hidden"
-              style={{ boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)' }}
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Open menu"
-            >
-              <svg
-                width="28"
-                height="28"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="feather feather-menu"
+          <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                className="p-3 rounded-full border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white shadow-lg md:hidden"
+                style={{ boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)' }}
+                onClick={() => setSidebarOpen(true)}
+                aria-label="Open menu"
               >
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            </button>
-            <div>
-              <div className="text-sm font-semibold text-slate-900 dark:text-slate-50">
-                {title}
-              </div>
-              <div className="text-xs text-slate-500 dark:text-slate-400">
-                {location.pathname}
+                <svg
+                  width="28"
+                  height="28"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="feather feather-menu"
+                >
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              </button>
+              <div>
+                <div className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+                  {title}
+                </div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">
+                  {location.pathname}
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
